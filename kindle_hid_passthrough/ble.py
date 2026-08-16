@@ -457,10 +457,33 @@ class BLEMixin:
 
     def _on_ble_hid_report(self, value, report_id):
         """Handle BLE HID report."""
-        # [consumer-forwarding fix] 记录每条收到的报告（键盘 id=5，消费类 id=1）
-        log.debug(f"[BLE] Report received rid={report_id} len={len(value)}")
-        self._forward_report(bytes([report_id]) + bytes(value))
-
+        # [consumer-forwarding fix] 报告 ID 修正：
+        # 设备 GATT 的 Report Reference 可能标错报告 ID（如 Smart 1-P 消费类
+        # 特征被标成 3/4，而 HID 描述符里是 1/5）。转发到 UHID 时若前置了错误
+        # 的 ID，内核在描述符里找不到对应报告，事件会被静默丢弃。
+        # 规则：
+        #   1) GATT ID 在描述符报告 ID 集合内 → 用它前置（键盘 ID 5 正常）；
+        #   2) 否则若数据首字节本身是描述符 ID → 数据自带 ID，原样转发；
+        #   3) 否则用描述符里最小 ID 前置（Smart 1-P 消费类 → 1）。
+        if getattr(self, '_descriptor_report_ids', None) is None:
+            self._descriptor_report_ids = {1, 5}
+            if getattr(self, 'report_map', None):
+                ids = set()
+                b = self.report_map
+                for i in range(len(b) - 1):
+                    if b[i] == 0x85:
+                        ids.add(b[i + 1])
+                if ids:
+                    self._descriptor_report_ids = ids
+        ids = self._descriptor_report_ids
+        if report_id in ids:
+            data = bytes([report_id]) + bytes(value)
+        elif value and value[0] in ids:
+            data = bytes(value)
+        else:
+            data = bytes([min(ids)]) + bytes(value)
+        log.info(f"[BLE] Report rid={report_id} -> id={data[0]} data={value.hex()}")
+        self._forward_report(data)
     async def _pair_ble(self, address: str) -> bool:
         """Pair with a BLE device."""
         log.info(f"[BLE] Pairing with {address}...")
