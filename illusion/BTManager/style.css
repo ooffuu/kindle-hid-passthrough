@@ -1,0 +1,652 @@
+/* BTManager - E-ink optimized stylesheet */
+/* WebKit 533 compatible: no flexbox, no grid, no CSS variables, no vh/vw */
+/* Kindle PW 1072x1448 @ 300PPI - sizes doubled for readability */
+
+* {
+    margin: 0;
+    padding: 0;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: sans-serif;
+    font-size: 40px;
+    line-height: 1.4;
+    color: #000;
+    background: #fff;
+    padding: 8px 20px 10px 20px;
+    -webkit-text-size-adjust: 100%;
+    overflow: hidden;
+    height: 100%;
+}
+
+html {
+    overflow: hidden;
+    height: 100%;
+}
+
+/* ---- Header ---- */
+
+.header {
+    position: relative;
+    text-align: center;
+    padding: 4px 0 10px 0;
+    border-bottom: 3px solid #000;
+    margin-bottom: 0;
+}
+
+.header h1 {
+    font-size: 52px;
+    font-weight: bold;
+    margin: 0 0 4px 0;
+}
+
+.btn-close {
+    position: absolute;
+    right: 0;
+    top: 6px;
+    min-width: 70px;
+    min-height: 70px;
+    padding: 10px 18px;
+    font-size: 44px;
+    font-weight: bold;
+    font-family: sans-serif;
+    border: 3px solid #000;
+    background: #fff;
+    color: #000;
+    cursor: pointer;
+    -webkit-appearance: none;
+    -webkit-border-radius: 6px;
+    border-radius: 6px;
+    line-height: 1;
+}
+
+.btn-close:active,
+.btn-close.btn-active {
+    background: #000;
+    color: #fff;
+}
+
+/* ---- Toggle Row ---- */
+
+.toggle-row {
+    padding: 16px 0;
+    border-bottom: 2px solid #000;
+    overflow: hidden;
+}
+
+.toggle-label {
+    font-size: 44px;
+    font-weight: bold;
+    float: left;
+    line-height: 60px;
+}
+
+.toggle {
+    float: right;
+    width: 120px;
+    height: 60px;
+    border: 4px solid #000;
+    -webkit-border-radius: 30px;
+    border-radius: 30px;
+    background: #fff;
+    padding: 4px;
+    cursor: pointer;
+    -webkit-appearance: none;
+    position: relative;
+}
+
+.toggle:active {
+    background: #e0e0e0;
+}
+
+.toggle-knob {
+    display: block;
+    width: 44px;
+    height: 44px;
+    -webkit-border-radius: 22px;
+    border-radius: 22px;
+    background: #000;
+    position: absolute;
+    top: 4px;
+    left: 4px;
+}
+
+.toggle.on .toggle-knob {
+    left: auto;
+    right: 4px;
+}
+
+/* ---- Section Labels ---- */
+
+.section-label {
+    font-size: 28px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    padding: 14px 0 6px 0;
+}
+
+.section-label-row {
+    overflow: hidden;
+    padding: 14px 0 6px 0;
+}
+
+.section-label-row .section-label {
+    float: left;
+    padding: 0;
+}
+
+.scan-indicator {
+    float: right;
+    font-size: 28px;
+    font-style: italic;
+    font-weight: normal;
+    letter-spacing: 0;
+    text-transform: none;
+}
+
+/* ---- Device Rows (main list) ---- */
+
+.device-list {
+    margin-bottom: 0;
+}
+
+.device-row {
+    padding: 14px 0;
+    border-top: 1px solid #000;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.device-row:last-child {
+    border-bottom: 1px solid #000;
+}
+
+.device-row-name {
+    font-size: 40px;
+    font-weight: bold;
+    float: left;
+    max-width: 80%;
+    overflow: hidden;
+}
+
+.device-row-name.idle {
+    font-weight: normal;
+}
+
+.device-row-sub {
+    font-size: 30px;
+    clear: both;
+    padding-top: 2px;
+}
+
+.device-row-chevron {
+    float: right;
+    font-size: 56px;
+    line-height: 70px;
+}
+
+/* Available device rows (scan results) */
+.available-row {
+    padding: 14px 0;
+    border-top: 1px solid #000;
+    overflow: hidden;
+}
+
+.available-row:last-child {
+    border-bottom: 1px solid #000;
+}
+
+.available-name {
+    font-size: 40px;
+    float: left;
+    max-width: 65%;
+    overflow: hidden;
+}
+
+.available-sub {
+    font-size: 30px;
+    clear: both;
+    padding-top: 2px;
+}
+
+.btn-pair {
+    float: right;
+    min-width: 140px;
+    min-height: 70px;
+    padding: 12px 24px;
+    font-size: 34px;
+    font-weight: bold;
+    font-family: sans-serif;
+    border: 2px solid #000;
+    background: #fff;
+    color: #000;
+    cursor: pointer;
+    text-align: center;
+    -webkit-appearance: none;
+    -webkit-border-radius: 4px;
+    border-radius: 4px;
+}
+
+.btn-pair:active,
+.btn-pair.btn-active {
+    background: #000;
+    color: #fff;
+}
+
+/* ---- Buttons ---- */
+
+.btn {
+    display: block;
+    width: 100%;
+    min-height: 76px;
+    padding: 16px 28px;
+    font-size: 38px;
+    font-weight: bold;
+    font-family: sans-serif;
+    border: 3px solid #000;
+    background: #fff;
+    color: #000;
+    cursor: pointer;
+    text-align: center;
+    margin-bottom: 12px;
+    -webkit-appearance: none;
+    -webkit-border-radius: 6px;
+    border-radius: 6px;
+}
+
+.btn:active,
+.btn.btn-active {
+    background: #000;
+    color: #fff;
+}
+
+.btn-scan {
+    margin-top: 16px;
+    margin-bottom: 8px;
+}
+
+.btn-scan.scanning {
+    background: #000;
+    color: #fff;
+}
+
+.btn-danger {
+    border-style: dashed;
+}
+
+.btn-start {
+    background: #e0e0e0;
+}
+
+.btn-stop {
+    background: #d0d0d0;
+}
+
+.btn-half {
+    float: left;
+    width: 48%;
+    margin-bottom: 0;
+}
+
+.btn-half + .btn-half {
+    float: right;
+}
+
+.scan-btn-wrap {
+    padding: 0;
+}
+
+/* ---- Device Detail Overlay ---- */
+
+.device-overlay {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    min-height: 100%;
+    background: #fff;
+    z-index: 80;
+    padding: 8px 20px 20px 20px;
+}
+
+.device-overlay.visible {
+    display: block;
+}
+
+.detail-body {
+    padding: 16px 0;
+}
+
+.detail-row {
+    padding: 14px 0;
+    border-bottom: 1px solid #000;
+    overflow: hidden;
+}
+
+.detail-label {
+    font-weight: bold;
+    font-size: 40px;
+    float: left;
+}
+
+.detail-value {
+    font-size: 40px;
+    float: right;
+}
+
+.detail-mono {
+    font-family: monospace;
+    font-size: 34px;
+}
+
+.detail-actions {
+    padding-top: 30px;
+}
+
+.btn-action {
+    margin-bottom: 14px;
+}
+
+/* ---- Off State ---- */
+
+.off-message {
+    font-size: 44px;
+    text-align: center;
+    padding-top: 80px;
+}
+
+.off-hint {
+    font-size: 34px;
+    text-align: center;
+    padding-top: 10px;
+}
+
+/* ---- Footer ---- */
+
+.footer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    font-size: 28px;
+    color: #000;
+    padding: 12px 20px 8px 20px;
+    border-top: 2px solid #000;
+    background: #fff;
+}
+
+.footer-link {
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+/* ---- Empty state ---- */
+
+.device-empty {
+    font-size: 36px;
+    color: #000;
+    font-style: italic;
+    padding: 20px 0;
+    text-align: center;
+}
+
+/* ---- Message bar ---- */
+
+.message-bar {
+    display: none;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 16px 20px;
+    border-top: 3px solid #000;
+    font-size: 36px;
+    font-weight: bold;
+    text-align: center;
+    background: #e0e0e0;
+    z-index: 200;
+}
+
+.message-bar.visible {
+    display: block;
+}
+
+.message-bar.error {
+    background: #fff;
+    border-top-style: dashed;
+}
+
+.hid-warning {
+    margin: 8px 0 4px;
+    padding: 12px 16px;
+    border: 3px dashed #000;
+    background: #fff;
+    color: #000;
+    font-size: 30px;
+    font-weight: bold;
+    text-align: center;
+}
+
+/* ---- Confirm dialog overlay ---- */
+
+.overlay {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.92);
+    z-index: 100;
+}
+
+.overlay.visible {
+    display: block;
+}
+
+.dialog {
+    position: absolute;
+    top: 30%;
+    left: 10%;
+    width: 80%;
+    border: 4px solid #000;
+    background: #fff;
+    padding: 32px;
+    text-align: center;
+}
+
+.dialog p {
+    font-size: 40px;
+    margin-bottom: 24px;
+    line-height: 1.4;
+}
+
+.dialog .dialog-addr {
+    font-family: monospace;
+    font-weight: bold;
+    font-size: 36px;
+}
+
+.dialog-buttons {
+    overflow: hidden;
+}
+
+.dialog-buttons .btn {
+    float: left;
+    width: 46%;
+    margin: 0 2%;
+}
+
+/* ---- Pair overlay ---- */
+
+.pair-overlay {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    min-height: 100%;
+    background: #fff;
+    z-index: 100;
+    padding: 8px 20px 20px 20px;
+}
+
+.pair-overlay.visible {
+    display: block;
+}
+
+.pair-dialog {
+    border: 4px solid #000;
+    background: #fff;
+    padding: 32px;
+    text-align: center;
+    margin-bottom: 16px;
+}
+
+.pair-dialog p {
+    font-size: 40px;
+    margin-bottom: 16px;
+    line-height: 1.4;
+}
+
+.pair-dialog .pair-addr {
+    font-family: monospace;
+    font-weight: bold;
+    font-size: 36px;
+}
+
+.pair-log-viewer {
+    border: 2px solid #000;
+    overflow: hidden;
+    height: 900px;
+}
+
+/* ---- Log overlay ---- */
+
+.log-overlay {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: #fff;
+    z-index: 90;
+    padding: 8px 20px 20px 20px;
+    overflow: hidden;
+}
+
+.log-overlay.visible {
+    display: block;
+}
+
+.log-header {
+    position: relative;
+    text-align: center;
+    padding: 8px 0 14px 0;
+    border-bottom: 3px solid #000;
+    margin-bottom: 12px;
+}
+
+.log-title {
+    font-size: 48px;
+    font-weight: bold;
+}
+
+.log-viewer {
+    border: 2px solid #000;
+    overflow: hidden;
+    height: 900px;
+}
+
+.log-content {
+    font-family: monospace;
+    font-size: 22px;
+    line-height: 1.3;
+    padding: 12px;
+    margin: 0;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+.log-controls {
+    overflow: hidden;
+    margin-top: 12px;
+}
+
+.log-controls .btn-half {
+    float: left;
+    width: 48%;
+    margin-bottom: 0;
+}
+
+.log-controls .btn-half + .btn-half {
+    float: right;
+}
+
+/* Keyboard test input inside debug overlay */
+.keyboard-test-section {
+    padding: 8px 12px;
+    border-bottom: 2px solid #666;
+}
+
+.keyboard-test {
+    width: 100%;
+    min-height: 60px;
+    font-size: 32px;
+    padding: 12px;
+    border: 3px solid #000;
+    background: #fff;
+    color: #333;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+/* Utility buttons section */
+.utility-section {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 2px solid #000;
+}
+
+/* Scale down for small screens (Basic 3, 600px); base sizes target the PW. */
+@media screen and (max-width: 700px) {
+    body { font-size: 22px; padding: 4px 12px 6px 12px; }
+    .header h1 { font-size: 28px; }
+    .btn-close { min-width: 40px; min-height: 40px; padding: 6px 10px; font-size: 24px; }
+    .toggle-label { font-size: 24px; line-height: 34px; }
+    .toggle { width: 66px; height: 34px; border-width: 2px; padding: 2px; }
+    .toggle-knob { width: 24px; height: 24px; top: 2px; left: 2px; }
+    .toggle.on .toggle-knob { right: 2px; }
+    .section-label { font-size: 15px; letter-spacing: 2px; }
+    .scan-indicator { font-size: 15px; }
+    .device-row-name { font-size: 22px; }
+    .device-row-sub { font-size: 16px; }
+    .device-row-chevron { font-size: 30px; line-height: 38px; }
+    .available-name { font-size: 22px; }
+    .available-sub { font-size: 16px; }
+    .btn-pair { min-width: 78px; min-height: 40px; padding: 7px 13px; font-size: 19px; }
+    .btn { min-height: 42px; padding: 9px 16px; font-size: 21px; margin-bottom: 7px; }
+    .detail-label, .detail-value { font-size: 22px; }
+    .detail-mono { font-size: 19px; }
+    .off-message { font-size: 24px; padding-top: 44px; }
+    .off-hint { font-size: 19px; }
+    .footer { font-size: 15px; padding: 7px 12px 5px 12px; }
+    .device-empty { font-size: 20px; }
+    .message-bar { font-size: 20px; padding: 9px 12px; }
+    .hid-warning { font-size: 18px; padding: 8px 10px; }
+    .dialog { padding: 18px; }
+    .dialog p { font-size: 22px; }
+    .dialog .dialog-addr, .pair-dialog .pair-addr { font-size: 20px; }
+    .pair-dialog { padding: 18px; }
+    .pair-dialog p { font-size: 22px; }
+    .log-title { font-size: 27px; }
+    .log-content { font-size: 12px; }
+    .log-viewer, .pair-log-viewer { height: 500px; }
+    .keyboard-test { font-size: 18px; min-height: 34px; }
+}

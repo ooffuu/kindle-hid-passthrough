@@ -1,0 +1,35 @@
+# Python bytecode
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Backup files
+*.backup
+*~
+
+# Build artifacts
+*.o
+*.so
+*.a
+build/
+dist/
+*.egg-info/
+BUILD_SHA
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# External build directories
+evsieve-kindle/
+.claude/
+future-work.md
+pr-24-*.md
+.worktrees/

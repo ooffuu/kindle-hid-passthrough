@@ -1,0 +1,6 @@
+此目录是 kindle-hid-passthrough 当前 main 分支 + 消费类报告转发补丁的完整源码树。
+上传到 GitHub fork 后，Actions 构建出的 dist/main.bin 必须包含以下标记字符串，
+可用下面命令在构建产物上验证（必做，避免安装到错误构建）：
+    grep -a "Found report type" dist/main.bin | head -1
+    grep -a "Report received rid=" dist/main.bin | head -1
+两个都有输出 = 补丁已编译进二进制。

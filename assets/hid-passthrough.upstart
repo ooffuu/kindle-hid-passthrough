@@ -1,0 +1,15 @@
+# HID Passthrough - Bluetooth HID host with UHID passthrough
+# For use with pre-built binary from releases
+start on started wmt
+stop on stopping filesystems
+
+respawn
+respawn limit 5 60
+
+env KINDLE_HID_BASE=/mnt/us/kindle_hid_passthrough
+
+console none
+
+script
+    exec /mnt/us/kindle_hid_passthrough/kindle-hid-passthrough --daemon >/dev/null 2>&1
+end script
