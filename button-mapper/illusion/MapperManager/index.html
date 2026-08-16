@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+    <title>Button Mapper</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+    <div id="messageBar" class="message-bar"></div>
+
+    <!-- Tab bar -->
+    <div class="tab-bar">
+        <button class="tab tab-active" data-tab="bindings">Bindings</button>
+        <button class="tab" data-tab="device">Device</button>
+        <button class="tab" data-tab="debug">Debug</button>
+    </div>
+
+    <!-- Bindings tab -->
+    <div id="tab-bindings" class="tab-content tab-visible">
+        <div class="device-picker-row">
+            <span class="picker-label">Device</span>
+            <div id="bindingsDevicePills" class="device-pills"></div>
+        </div>
+        <div class="section-label-row">
+            <span class="section-label">Mappings</span>
+            <button id="btnAddMany" class="btn-small">+ Many</button>
+            <button id="btnAdd" class="btn-small">+ Add</button>
+        </div>
+        <div id="bindingsList" class="binding-list"></div>
+
+        <div class="actions-row">
+            <button id="btnSave" class="btn btn-half">Save &amp; Apply</button>
+            <button id="btnReload" class="btn btn-half">Reload</button>
+        </div>
+    </div>
+
+    <!-- Device tab -->
+    <div id="tab-device" class="tab-content">
+        <div class="section-label-row">
+            <span class="section-label">Configured devices</span>
+            <button id="btnNewDevice" class="btn-small">+ New</button>
+        </div>
+        <div id="configuredDevices" class="device-list"></div>
+
+        <div class="section-label">Available on /dev/input</div>
+        <div id="deviceList" class="device-list"></div>
+        <button id="btnRescan" class="btn">Refresh</button>
+
+        <div class="section-label">Daemon</div>
+        <div class="detail-row">
+            <span class="detail-label">Status</span>
+            <span id="daemonStatus" class="detail-value">--</span>
+        </div>
+        <div class="actions-row">
+            <button id="btnDaemonStop" class="btn btn-third">Stop</button>
+            <button id="btnDaemonStart" class="btn btn-third">Start</button>
+            <button id="btnRestart" class="btn btn-third">Restart</button>
+        </div>
+    </div>
+
+    <!-- Debug tab -->
+    <div id="tab-debug" class="tab-content">
+        <div class="section-label">Live capture</div>
+        <p class="hint">Press a button on the paired device. Use this to discover button codes.</p>
+        <button id="btnLiveCapture" class="btn">Start Capture</button>
+
+        <div class="section-label">Logs</div>
+        <button id="btnLogs" class="btn">View Logs</button>
+
+        <div class="section-label">Raw config</div>
+        <textarea id="rawConfig" class="raw-config"></textarea>
+        <button id="btnSaveRaw" class="btn">Save Raw Config</button>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <span id="footerVersion">Button Mapper</span>
+    </div>
+
+    <!-- Device-detail overlay -->
+    <div id="deviceDetailOverlay" class="overlay">
+        <div class="dialog dialog-tall">
+            <p id="deviceDetailTitle">Edit device</p>
+            <div class="detail-row">
+                <span class="detail-label">Name</span>
+                <input id="devDetailName" class="detail-input" type="text" />
+            </div>
+            <div class="detail-id-caption">ID: <span id="devDetailIdView">--</span></div>
+            <div class="detail-row">
+                <span class="detail-label">MAC</span>
+                <input id="devDetailUniq" class="detail-input detail-mono" type="text" />
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Exclusive <button id="devDetailGrabInfo" class="info-btn" type="button">i</button></span>
+                <button id="devDetailGrab" class="toggle"><span class="toggle-knob"></span></button>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Layout <button id="devDetailLayoutInfo" class="info-btn" type="button">i</button></span>
+                <button id="devDetailLayout" class="detail-input detail-picker" type="button" data-code="">(system default)</button>
+            </div>
+            <div class="device-detail-actions">
+                <div class="actions-row">
+                    <button id="btnDeviceSave"   class="btn btn-half">Save</button>
+                    <button id="btnDeviceCancel" class="btn btn-half">Cancel</button>
+                </div>
+                <button id="btnDeviceDelete" class="btn btn-danger">Remove</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Info dialog (click-to-dismiss, no timeout) -->
+    <div id="infoOverlay" class="overlay">
+        <div class="dialog">
+            <p id="infoMessage"></p>
+            <div class="dialog-buttons">
+                <button id="btnInfoClose" class="btn">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Logs overlay -->
+    <div id="logsOverlay" class="overlay">
+        <div class="dialog dialog-tall dialog-wide">
+            <p>Logs</p>
+            <pre id="logsContent" class="logs-content"></pre>
+            <div class="actions-row">
+                <button id="btnLogsRefresh" class="btn btn-half">Refresh</button>
+                <button id="btnLogsClose" class="btn btn-half">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Capture overlay -->
+    <div id="captureOverlay" class="overlay">
+        <div class="dialog">
+            <p id="captureMsg">Press a button now...</p>
+            <p id="captureHint" class="hint">Waiting up to 8 seconds</p>
+            <div class="dialog-buttons">
+                <button id="btnCaptureCancel" class="btn">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Action picker overlay -->
+    <div id="actionOverlay" class="overlay">
+        <div class="dialog dialog-tall">
+            <p id="actionTitle">Pick an action</p>
+            <div class="tab-bar tab-bar-inline">
+                <button class="action-tab action-tab-active" data-action-tab="auto">Auto</button>
+                <button class="action-tab" data-action-tab="kindle">Kindle</button>
+                <button class="action-tab" data-action-tab="koreader">KOReader</button>
+                <button class="action-tab" data-action-tab="keyboard">Keyboard</button>
+                <button class="action-tab" data-action-tab="custom">Custom</button>
+            </div>
+            <div id="koreaderStatus" class="koreader-status hidden"></div>
+            <input id="actionSearch" class="action-search" type="text" placeholder="Search keys..." />
+            <div id="actionList" class="action-list"></div>
+            <div id="actionCustom" class="action-custom">
+                <p class="hint">Shell command or absolute path to a script. Runs via /bin/sh.</p>
+                <textarea id="actionCustomCmd" class="raw-config" placeholder="e.g. /mnt/us/my-scripts/foo.sh arg1"></textarea>
+                <button id="btnActionCustomUse" class="btn">Use this</button>
+            </div>
+            <div class="dialog-buttons">
+                <button id="btnActionCancel" class="btn">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Layout picker overlay -->
+    <div id="layoutOverlay" class="overlay">
+        <div class="dialog dialog-tall">
+            <p>Keyboard layout</p>
+            <input id="layoutSearch" class="action-search visible" type="text" placeholder="Search layouts..." />
+            <div id="layoutList" class="action-list with-search"></div>
+            <div class="dialog-buttons">
+                <button id="btnLayoutCancel" class="btn">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add binding picker overlay -->
+    <div id="addOverlay" class="overlay">
+        <div class="dialog">
+            <p>Add a mapping</p>
+            <div class="add-options">
+                <button class="btn add-opt" data-slot-kind="button">Capture button</button>
+                <button class="btn add-opt" data-slot-kind="dpad-up">D-pad Up</button>
+                <button class="btn add-opt" data-slot-kind="dpad-down">D-pad Down</button>
+                <button class="btn add-opt" data-slot-kind="dpad-left">D-pad Left</button>
+                <button class="btn add-opt" data-slot-kind="dpad-right">D-pad Right</button>
+                <button class="btn add-opt" data-slot-kind="trigger-lt">Trigger LT</button>
+                <button class="btn add-opt" data-slot-kind="trigger-rt">Trigger RT</button>
+            </div>
+            <div class="dialog-buttons">
+                <button id="btnAddCancel" class="btn">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        setTimeout(function () {
+            var s = document.createElement("script");
+            s.src = "script.js";
+            document.body.appendChild(s);
+        }, 100);
+    </script>
+</body>
+</html>
