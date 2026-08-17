@@ -360,11 +360,31 @@ class HIDHost(ClassicMixin, BLEMixin):
             return True
         return False
 
+    def _inject_consumer_usage_range(self):
+        """[consumer-forwarding fix] 部分廉价 BLE 设备（如 Smart 1-P）的消费类
+        报告（Report ID 1）缺少 Usage Min/Max 项，内核不会注册音量/亮度/主页键，
+        消费类事件被静默丢弃。这里在 Report ID 1 后补上 Usage Min/Max
+        （0x0000-0x029C，与 Logical Min/Max 一致）。"""
+        if not self.report_map:
+            return
+        needle = b'\x85\x01'
+        idx = self.report_map.find(needle)
+        if idx < 0:
+            return
+        # 已注入过则跳过
+        if self.report_map[idx + 2:idx + 4] == b'\x19\x00':
+            return
+        self.report_map = (self.report_map[:idx + 2]
+                          + b'\x19\x00\x00\x29\x9c\x02'
+                          + self.report_map[idx + 2:])
+        log.info("[Host] Injected consumer usage range (0x0000-0x029C) into report map")
+
     def _create_uhid_device(self):
         """Create UHID virtual device."""
         if not self.report_map:
             log.warning("No report descriptor for UHID")
             return
+        self._inject_consumer_usage_range()
 
         if not ensure_uhid():
             log.error("uhid unavailable; connected device will have no input path")

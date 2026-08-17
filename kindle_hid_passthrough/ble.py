@@ -459,12 +459,14 @@ class BLEMixin:
         """Handle BLE HID report."""
         # [consumer-forwarding fix] 报告 ID 修正：
         # 设备 GATT 的 Report Reference 可能标错报告 ID（如 Smart 1-P 消费类
-        # 特征被标成 3/4，而 HID 描述符里是 1/5）。转发到 UHID 时若前置了错误
-        # 的 ID，内核在描述符里找不到对应报告，事件会被静默丢弃。
+        # 特征曾被标成 3/4，而 HID 描述符里是 1/5）。转发到 UHID 时若前置了
+        # 错误的 ID，内核在描述符里找不到对应报告，事件会被静默丢弃。
         # 规则：
-        #   1) GATT ID 在描述符报告 ID 集合内 → 用它前置（键盘 ID 5 正常）；
-        #   2) 否则若数据首字节本身是描述符 ID → 数据自带 ID，原样转发；
-        #   3) 否则用描述符里最小 ID 前置（Smart 1-P 消费类 → 1）。
+        #   1) GATT ID 在描述符报告 ID 集合内 → 用它前置（键盘 5 正常）；
+        #   2) 否则若数据像键盘报告（[modifiers<=8, key<=101]，翻页器不按修饰键）
+        #      → 前置 5；
+        #   3) 否则若数据首字节本身是描述符 ID → 原样转发（数据自带 ID）；
+        #   4) 否则 → 前置描述符里最小 ID（消费类 → 1）。
         if getattr(self, '_descriptor_report_ids', None) is None:
             self._descriptor_report_ids = {1, 5}
             if getattr(self, 'report_map', None):
@@ -476,8 +478,11 @@ class BLEMixin:
                 if ids:
                     self._descriptor_report_ids = ids
         ids = self._descriptor_report_ids
+        keyboard_like = len(value) >= 2 and value[0] <= 8 and value[1] <= 0x65
         if report_id in ids:
             data = bytes([report_id]) + bytes(value)
+        elif keyboard_like and value[0] not in ids:
+            data = bytes([5]) + bytes(value)
         elif value and value[0] in ids:
             data = bytes(value)
         else:

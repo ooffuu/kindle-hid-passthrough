@@ -1,10 +1,2 @@
-此目录是 kindle-hid-passthrough 当前 main 分支 + 消费类报告转发补丁 v2 的完整源码树。
-补丁包含两处：
-  1. ble.py _process_ble_report_char：订阅所有报告特征（不限于 INPUT）；
-  2. ble.py _on_ble_hid_report：报告 ID 重映射（Smart 1-P 的 GATT 报告特征被标成
-     ID 3/4/5，而 HID 描述符里是 1/5；现在会重映射为描述符里的正确 ID，
-     消费类 -> 1，键盘 -> 5），并输出 INFO 日志便于验证。
-构建产物验证（安装前必做）：
-    grep -a "Found report type" dist/main.bin | head -1
-    grep -a "Report rid=" dist/main.bin | head -1
-两个都有输出 = 补丁 v2 已编译进二进制。
+v2.2: 订阅全部报告特征 + 报告ID重映射 + 消费类Usage注入
+产物验证: grep -a "Injected consumer usage" dist/main.bin
