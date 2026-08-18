@@ -1,2 +1,2 @@
-v2.2: 订阅全部报告特征 + 报告ID重映射 + 消费类Usage注入
+v2.2-修正: 注入编码修正为 1A 00 00 2A 9c 02（之前 19/29 编码错误会破坏描述符导致无输入设备）
 产物验证: grep -a "Injected consumer usage" dist/main.bin

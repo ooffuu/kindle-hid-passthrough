@@ -364,7 +364,9 @@ class HIDHost(ClassicMixin, BLEMixin):
         """[consumer-forwarding fix] 部分廉价 BLE 设备（如 Smart 1-P）的消费类
         报告（Report ID 1）缺少 Usage Min/Max 项，内核不会注册音量/亮度/主页键，
         消费类事件被静默丢弃。这里在 Report ID 1 后补上 Usage Min/Max
-        （0x0000-0x029C，与 Logical Min/Max 一致）。"""
+        （0x0000-0x029C，与 Logical Min/Max 一致）。
+        注意编码：HID 短项 = [tag:4][type:2][size:2]；Usage Min/Max 是
+        Local 类型、值 16 位 → 头字节 0x1A / 0x2A（size=2）。"""
         if not self.report_map:
             return
         needle = b'\x85\x01'
@@ -372,10 +374,10 @@ class HIDHost(ClassicMixin, BLEMixin):
         if idx < 0:
             return
         # 已注入过则跳过
-        if self.report_map[idx + 2:idx + 4] == b'\x19\x00':
+        if self.report_map[idx + 2:idx + 4] == b'\x1a\x00':
             return
         self.report_map = (self.report_map[:idx + 2]
-                          + b'\x19\x00\x00\x29\x9c\x02'
+                          + b'\x1a\x00\x00\x2a\x9c\x02'
                           + self.report_map[idx + 2:])
         log.info("[Host] Injected consumer usage range (0x0000-0x029C) into report map")
 
