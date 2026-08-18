@@ -1,2 +1,2 @@
-v2.2-修正: 注入编码修正为 1A 00 00 2A 9c 02（之前 19/29 编码错误会破坏描述符导致无输入设备）
-产物验证: grep -a "Injected consumer usage" dist/main.bin
+v3: 消费类->键盘F键翻译(F1右旋/F2左旋/F3双击)
+产物验证: grep -a "consumer_map" dist/main.bin

@@ -457,16 +457,15 @@ class BLEMixin:
 
     def _on_ble_hid_report(self, value, report_id):
         """Handle BLE HID report."""
-        # [consumer-forwarding fix] 报告 ID 修正：
-        # 设备 GATT 的 Report Reference 可能标错报告 ID（如 Smart 1-P 消费类
-        # 特征曾被标成 3/4，而 HID 描述符里是 1/5）。转发到 UHID 时若前置了
-        # 错误的 ID，内核在描述符里找不到对应报告，事件会被静默丢弃。
-        # 规则：
-        #   1) GATT ID 在描述符报告 ID 集合内 → 用它前置（键盘 5 正常）；
-        #   2) 否则若数据像键盘报告（[modifiers<=8, key<=101]，翻页器不按修饰键）
-        #      → 前置 5；
-        #   3) 否则若数据首字节本身是描述符 ID → 原样转发（数据自带 ID）；
-        #   4) 否则 → 前置描述符里最小 ID（消费类 → 1）。
+        # [consumer-forwarding fix] 消费类报告翻译 + 报告 ID 修正：
+        # 1) 本 Kindle 内核（4.1.15）对消费类 16 位数组报告不产生任何事件
+        #    （注入 Usage Min/Max 也不注册），因此把设备实际发送的消费类用法
+        #    翻译成键盘用法（F1/F2/F3，键盘路径已验证可用），走报告 5：
+        #      0x00E9 音量+/右旋 -> F1(59)  增加背光
+        #      0x00EA 音量-/左旋 -> F2(60)  降低背光
+        #      0x0223 主页/双击  -> F3(61)  返回主页
+        #    0x0000（旋转间隙的空帧）翻译为键盘释放 [5,0,0]。
+        # 2) 其它情况仍按描述符报告 ID 集合重映射（同 v2.1）。
         if getattr(self, '_descriptor_report_ids', None) is None:
             self._descriptor_report_ids = {1, 5}
             if getattr(self, 'report_map', None):
@@ -478,15 +477,25 @@ class BLEMixin:
                 if ids:
                     self._descriptor_report_ids = ids
         ids = self._descriptor_report_ids
+        consumer_rid = min(ids)
         keyboard_like = len(value) >= 2 and value[0] <= 8 and value[1] <= 0x65
-        if report_id in ids:
+        consumer_map = {0x00E9: 0x3A, 0x00EA: 0x3B, 0x0223: 0x3C}
+        if report_id in ids and report_id != consumer_rid:
             data = bytes([report_id]) + bytes(value)
+        elif report_id == consumer_rid and len(value) == 2:
+            usage = int.from_bytes(bytes(value), 'little')
+            if usage == 0:
+                data = bytes([5, 0x00, 0x00])
+            elif usage in consumer_map:
+                data = bytes([5, 0x00, consumer_map[usage]])
+            else:
+                data = bytes([consumer_rid]) + bytes(value)
         elif keyboard_like and value[0] not in ids:
             data = bytes([5]) + bytes(value)
         elif value and value[0] in ids:
             data = bytes(value)
         else:
-            data = bytes([min(ids)]) + bytes(value)
+            data = bytes([consumer_rid]) + bytes(value)
         log.info(f"[BLE] Report rid={report_id} -> id={data[0]} data={value.hex()}")
         self._forward_report(data)
     async def _pair_ble(self, address: str) -> bool:
